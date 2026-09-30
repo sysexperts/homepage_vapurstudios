@@ -32,11 +32,17 @@
 <main>
 <div class="hero-wrap">
   <div class="hero-img"><img id="mainshot" src="assets/banner.jpg" alt="Sloptoberfest Artwork" width="1672" height="941"></div>
+  <button class="hero-play" id="heroplay" type="button" aria-label="Trailer abspielen">
+    <span class="play-circle"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+    <span class="play-label">Trailer ansehen</span>
+    <span class="play-note">Beim Abspielen wird das Video von YouTube geladen</span>
+  </button>
+  <div class="hero-video" id="herovideo"></div>
 </div>
 
 <div class="shots">
   <div class="shots-grid">
-    <button class="active" data-src="assets/banner.jpg" aria-label="Artwork anzeigen"><img src="assets/banner.jpg" alt="" loading="lazy"></button>
+    <button class="active is-trailer" data-src="assets/banner.jpg" data-trailer aria-label="Trailer anzeigen"><img src="assets/banner.jpg" alt="" loading="lazy"><span class="thumb-play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button>
     <button data-src="assets/screen1.jpg" aria-label="Screenshot 1 anzeigen"><img src="assets/screen1.jpg" alt="" loading="lazy"></button>
     <button data-src="assets/screen2.jpg" aria-label="Screenshot 2 anzeigen"><img src="assets/screen2.jpg" alt="" loading="lazy"></button>
   </div>
@@ -178,8 +184,18 @@
 </footer>
 
 <script>
+  var heroWrap = document.querySelector('.hero-wrap');
+  var heroVideo = document.getElementById('herovideo');
+  // Trailer wird erst nach Klick von YouTube geladen (Datenschutz)
+  document.getElementById('heroplay').addEventListener('click', function(){
+    heroVideo.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/dqslxx3b6Ws?autoplay=1&rel=0" title="Sloptoberfest Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    heroWrap.classList.add('playing');
+  });
   document.querySelectorAll('.shots-grid button').forEach(function(btn){
     btn.addEventListener('click', function(){
+      heroVideo.innerHTML = '';
+      heroWrap.classList.remove('playing');
+      heroWrap.classList.toggle('no-trailer', !btn.hasAttribute('data-trailer'));
       document.getElementById('mainshot').src = btn.getAttribute('data-src');
       document.querySelectorAll('.shots-grid button').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
